@@ -7,7 +7,10 @@ authors = [
     { name = "hsou-88", email = "sen10.d.g@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "hypothesis>=6.170.13",
+    "pytest>=9.2.0",
+]
 
 [project.scripts]
 module-00 = "module_00:main"
