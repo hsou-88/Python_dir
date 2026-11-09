@@ -216,7 +216,7 @@ if __name__ == "__main__":
     print()
     print("=== Seed")
     seed.show()
-    stats_show(seed)
+    print("[make sunflower grow, age and bloom]")
     seed.grow(30)
     seed.age(20)
     seed.bloom()
