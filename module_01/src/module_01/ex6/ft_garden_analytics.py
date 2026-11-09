@@ -222,6 +222,7 @@ if __name__ == "__main__":
     seed.bloom()
     seed.show()
     stats_show(seed)
+    print()
     print("=== Anonymous")
     anonymous.show()
     stats_show(anonymous)
