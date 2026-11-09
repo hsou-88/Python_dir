@@ -22,7 +22,7 @@ if __name__ == "__main__":
     for day in range(1, 8):
         rose.grow(0.8)
         rose.age(1)
-        print(f"=== Day {day}===")
+        print(f"=== Day {day} ===")
         rose.show()
     week_growth = rose.height - intit_height
     print(f"Growth this week: {week_growth:.1f}cm")
