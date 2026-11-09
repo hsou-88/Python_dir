@@ -100,10 +100,10 @@ class Vegetable(Plant):
 
     def grow(self, amount: float) -> None:
         super().grow(amount)
-
+        self.value += 10
     def age(self, amount: int) -> None:
         super().age(amount)
-        self.value += amount
+        self.value += 10
 
 
 if __name__ == "__main__":

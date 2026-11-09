@@ -155,10 +155,11 @@ class Vegetable(Plant):
 
     def grow(self, amount: float) -> None:
         super().grow(amount)
+        self.value += 10
 
     def age(self, amount: int) -> None:
         super().age(amount)
-        self.value += amount
+        self.value += 10
 
 
 class Seed(Flower):
@@ -179,7 +180,7 @@ class Seed(Flower):
 
     def bloom(self) -> None:
         super().bloom()
-        self.seeds += 42
+        self.seeds = 42
 
 
 def stats_show(plant: Plant) -> None:
