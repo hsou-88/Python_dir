@@ -14,7 +14,7 @@ class Plant:
         else:
             self._height = amount
 
-    def set_age(self, amount: int):
+    def set_age(self, amount: int)-> None:
         if amount < 0:
             print(f"{self._name}: Error, age can't be negative")
             print("Age update rejected")

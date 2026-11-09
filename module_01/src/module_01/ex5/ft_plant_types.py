@@ -14,7 +14,7 @@ class Plant:
         else:
             self._height = amount
 
-    def set_age(self, amount: int):
+    def set_age(self, amount: int) -> None:
         if amount < 0:
             print(f"{self._name}: Error, age can't be negative")
             print("Age update rejected")
@@ -72,9 +72,9 @@ class Tree(Plant):
         super().show()
         print(f" Trunk diameter: {self.diameter:.1f}cm")
 
-    def produce_shade(self):
+    def produce_shade(self) -> None:
         print(
-            f"Tree Oak now produces a shade of "
+            f"Tree {self._name} now produces a shade of "
             f"{self._height:.1f}cm "
             f"long and {self.diameter:.1f}cm wide."
             )
@@ -93,13 +93,14 @@ class Vegetable(Plant):
         self.value = value
         self.season = season
 
-    def show(self):
+    def show(self) -> None:
         super().show()
         print(f" Harvest season: {self.season}")
         print(f" Nutritional value: {self.value}")
 
     def grow(self, amount: float) -> None:
         super().grow(amount)
+        self.value += 1
 
     def age(self, amount: int) -> None:
         super().age(amount)

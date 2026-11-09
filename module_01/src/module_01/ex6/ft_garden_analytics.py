@@ -15,7 +15,7 @@ class Plant:
             self._show_calls += 1
 
         def show(self) -> None:
-            print(f"Status: {self._grow_calls} grow, "
+            print(f"Stats: {self._grow_calls} grow, "
                   f"{self._age_calls} age, "
                   f"{self._show_calls} show"
                   )
@@ -62,14 +62,14 @@ class Plant:
 
     def age(self, amount: int) -> None:
         self.set_age(self.get_age() + amount)
-        self._stat.record_age
+        self._stat.record_age()
 
     def show_stat(self) -> None:
         self._stat.show()
 
     @classmethod
     def create(cls) -> "Plant":
-        return cls("Unknow Plant", 0, 0)
+        return cls("Unknown plant", 0, 0)
 
     @staticmethod
     def check_age(plant_age: int) -> bool:
@@ -175,7 +175,7 @@ class Seed(Flower):
 
     def show(self) -> None:
         super().show()
-        print(f" Seed: {self.seeds}")
+        print(f" Seeds: {self.seeds}")
 
     def bloom(self) -> None:
         super().bloom()
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     print()
     flower = Flower("rose", 15, 10, "red")
     tree = Tree("oak", 200, 365, 5)
-    seed = Seed("sunflower", 80, 45, "yellw", 0)
+    seed = Seed("sunflower", 80, 45, "yellow", 0)
     anonymous = Plant.create()
     print("=== Flower")
     flower.show()
