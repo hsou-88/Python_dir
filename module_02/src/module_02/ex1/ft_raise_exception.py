@@ -4,49 +4,49 @@ def input_temperature(temp_str: str) -> int:
 
 def test_tempertature() -> None:
     temp = "25"
-    print(f"Input data is {temp}")
+    print(f"Input data is '{temp}'")
     try:
         i = input_temperature(temp)
         if i > 40:
-            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)\n")
+            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)")
         elif i < 0:
-            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)\n")
+            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)")
         else:
             print(f"Temperature is now {i}℃\n")
     except ValueError as e:
         print(f"{e}\n")
     temp ="abc"
-    print(f"Input data is {temp}")
+    print(f"Input data is '{temp}'")
     try:
         i = input_temperature(temp)
         if i > 40:
-            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)\n")
+            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)")
         elif i < 0:
-            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)\n")
+            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)")
         else:
             print(f"Temperature is now {i}℃\n")
     except ValueError as e:
         print(f"{e}\n")
     temp = "100"
-    print(f"Input data is {temp}")
+    print(f"Input data is '{temp}'")
     try:
         i = input_temperature(temp)
         if i > 40:
-            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)\n")
+            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)")
         elif i < 0:
-            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)\n")
+            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)")
         else:
             print(f"Temperature is now {i}℃\n")
     except ValueError as e:
         print(f"{e}\n")
         temp ="-50"
-        print(f"Input data is {temp}")
+        print(f"Input data is '{temp}'")
     try:
         i = input_temperature(temp)
         if i > 40:
-            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)\n")
+            raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)")
         elif i < 0:
-            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)\n")
+            raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)")
         else:
             print(f"Temperature is now {i}℃\n")
     except ValueError as e:
@@ -56,7 +56,7 @@ def test_tempertature() -> None:
 
 
 def main() -> None:
-    print("=== Garden Temperature ===")
+    print("=== Garden Temperature Checker ===")
     print()
     test_tempertature()
 
@@ -73,11 +73,11 @@ if __name__ == "__main__":
 #     try:
 #         i = input_temperature(temp)
 #         if i > 40:
-#             raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)\n")
+#             raise ValueError(f"{temp}℃ is too hot for plants (max 40℃)")
 #         elif i < 0:
-#             raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)\n")
+#             raise ValueError(f"{temp}℃ is too cold ofr plants (min 0℃)")
 #         else:
-#             print(f"Temperature is now {i}℃\n")
+#             print(f"Temperature is now {i}℃")
 #     except ValueError as e:
 #         print(f"{e}\n")
 
