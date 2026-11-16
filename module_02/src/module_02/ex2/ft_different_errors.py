@@ -1,40 +1,37 @@
-def garden_operations(operation_number) -> None:
-    try:
-        if operation_number == 0:
-            raise ValueError("Caught ValueError: invalid literal for int() with base 10: 'abc'")
-    except ValueError as e:
-        print(f"{e}\n")
-    try:
-        if operation_number == 1:
-            raise ZeroDivisionError("Caught ZeroDivisionError: division by zero")
-    except ZeroDivisionError as e:
-        print(f"{e}\n")
-    try:
-        if operation_number == 2:
-            raise FileNotFoundError("Caught FileNotFoundError: [Errno 2] No such file or directory: '/non/existent/file'")
-    except FileNotFoundError as e:
-        print(f"{e}\n")
-    try:
-        if operation_number == 3:
-            raise TypeError("Caught TypeError: can only concatenate str (not \"int\") to str")
-    except TypeError as e:
-        print(f"{e}\n")
-    if operation_number > 3 or operation_number < 0:
-        print(f"Operation completed successfully!")
+def garden_operations(operation_number: int) -> None:
+    if operation_number == 0:
+        int("abc")
+    elif operation_number == 1:
+        1/0
+    elif operation_number == 2:
+        open("/non/existent/file")
+    elif operation_number == 3:
+        "abc" + 1
 
-def main() -> None:
-    print("Testing operation 0...")
-    garden_operations(0)
-    print("Testing operation 1...")
-    garden_operations(1)
-    print("Testing operation 2...")
-    garden_operations(2)
-    print("Testing operation 3...")
-    garden_operations(3)
-    print("Testing operation 4...")
-    garden_operations(4)
+
+def test_error_types() -> None:
+    for i in (0, 1, 2, 3, 4):
+        print(f"Testing operation {i}...")
+        try:
+            garden_operations(i)
+        except ValueError as error:
+            print(f"Caught ValueError: {error}")
+        except ZeroDivisionError as error:
+            print(f"Caught ZeroDivisionError: {error}")
+        except FileNotFoundError as error:
+            print(f"Caught FileNotFoundError: {error}")
+        except TypeError as error:
+            print(f"Caught TypeError: {error}")
+        else:
+            print("Operation completed successfully!")
     print()
     print("All error types tested successfully!")
+
+
+def main() -> None:
+    print("== Garden Error Types Demo ===")
+    test_error_types()
+
 
 if __name__ == "__main__":
     main()
