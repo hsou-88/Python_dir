@@ -1,7 +1,7 @@
 import random
 
 
-def get_player_achievements() -> set[str]:
+def gen_player_achievements() -> set[str]:
     achievements = [
         "Crafting Genius",
         "Strategist",
@@ -40,10 +40,10 @@ def main() -> None:
         "Boss Slayer",
         "Hidden Path Finder",
     ]
-    alice = get_player_achievements()
-    bob = get_player_achievements()
-    charlie = get_player_achievements()
-    dylan = get_player_achievements()
+    alice = gen_player_achievements()
+    bob = gen_player_achievements()
+    charlie = gen_player_achievements()
+    dylan = gen_player_achievements()
     players = [
         ("Alice", alice),
         ("Bob", bob),
@@ -51,7 +51,7 @@ def main() -> None:
         ("Dylan", dylan),
     ]
 
-    print("=== Achievement Tracker System ==")
+    print("=== Achievement Tracker System ===")
     for name, achievements in players:
         print(f"Player {name}: {achievements}")
 

@@ -9,7 +9,7 @@ def gen_event() -> typing.Generator[tuple[str, str], None, None]:
         "run",
         "eat",
         "sleep",
-        "garb",
+        "grab",
         "move",
         "climb",
         "swim",
@@ -36,7 +36,7 @@ def main() -> None:
     stream = gen_event()
     for index in range(1000):
         name, action = next(stream)
-        print(f"Event {index}: Player {name} did aciton {action}")
+        print(f"Event {index}: Player {name} did action {action}")
 
     events: list[tuple[str, str]] = []
     for _ in range(10):

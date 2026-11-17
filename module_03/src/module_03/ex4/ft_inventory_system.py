@@ -9,6 +9,9 @@ def invent_valid() -> dict[str, int]:
         except ValueError:
             print(f"Error - invalid parameter '{item}'")
             continue
+        if not item_name.strip():
+            print(f"Error - invalid parameter '{item}'")
+            continue
         try:
             quantity = int(quantity_str)
         except ValueError as e:
@@ -47,7 +50,10 @@ def main() -> None:
     print("=== Inventory System Analysis ===")
     item_dict = invent_valid()
     stats_inventory(item_dict)
-    item_dict.update({"magic_item": 1})
+    new_item = "magic_item"
+    while new_item in item_dict:
+        new_item += "_"
+    item_dict.update({new_item: 1})
     print(f"Updated inventory: {item_dict}")
 
 
