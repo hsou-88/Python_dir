@@ -9,7 +9,6 @@ def get_player_pos() -> tuple[float, float, float]:
         except ValueError:
             print("Invalid syntax")
             continue
-
         cood: list[float] = []
         for point in (x_input, y_input, z_input):
             try:
@@ -26,7 +25,7 @@ def main() -> None:
     print("=== Game Coordinate System ===")
     print()
     print("Get a first set of coordinates")
-    cood_1: tuple[float, float, float] = get_player_pos()
+    cood_1 = get_player_pos()
     x1, y1, z1 = cood_1
     print(f"Got a first tuple: {cood_1}")
     print(f"It includes: X={x1}, Y={y1}, Z={z1}")
@@ -34,10 +33,15 @@ def main() -> None:
     print(f"Distance to center: {round(dist_0, 4)}")
     print()
     print("Get a second set of coordinates")
-    cood_2: tuple[float, float, float] = get_player_pos()
+    cood_2 = get_player_pos()
     x2, y2, z2 = cood_2
+<<<<<<< HEAD
     dist_1 = math.sqrt((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)
     print(f"Distance between the 2 sets of coordinates: {round(dist_1, 4)}")
+=======
+    dist_1 = math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
+    print(f"Distance between the 2 sets of coordinates: {dist_1}")
+>>>>>>> refs/remotes/origin/main
 
 
 if __name__ == "__main__":
