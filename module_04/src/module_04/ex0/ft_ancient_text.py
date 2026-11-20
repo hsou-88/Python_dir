@@ -5,7 +5,7 @@ def open_text() -> None:
     if len(sys.argv) != 2:
         print("Usage: ft_ancient_text.py <file>")
         return
-    
+
     name = sys.argv[1]
     print("=== Cyber Archives Recovery ===")
     try:
@@ -15,14 +15,14 @@ def open_text() -> None:
             text = file.read()
         finally:
             file.close()
-    except OSError as e:
-        print(f"Error accessing file '{name}':{e}")
+    except (OSError, ValueError) as e:
+        print(f"Error opening file '{name}': {e}")
         return
-    
-    print("---\n")
-    print(text, end="")
-    print("\n---")
-    print(f"File {name} closed.")
+
+    print("---")
+    print(text, end="" if text.endswith("\n") else "\n")
+    print("---")
+    print(f"File '{name}' closed.")
 
 
 def main() -> None:
