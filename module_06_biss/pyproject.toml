@@ -1,17 +1,15 @@
 [project]
 name = "module-06-biss"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-authors = [
-    { name = "hsou-88", email = "sen10.d.g@gmail.com" }
-]
-requires-python = ">=3.12"
+description = "Code Nexus: abstract architecture and polymorphism"
+requires-python = ">=3.10"
 dependencies = []
 
-[project.scripts]
-module-06-biss = "module_06_biss:main"
+[dependency-groups]
+dev = ["flake8", "mypy"]
 
-[build-system]
-requires = ["uv_build>=0.13.5,<0.14.0"]
-build-backend = "uv_build"
+[tool.mypy]
+python_version = "3.10"
+strict = true
+sqlite_cache = false
+exclude = ["^\\.venv/"]
