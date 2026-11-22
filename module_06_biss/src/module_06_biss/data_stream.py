@@ -38,8 +38,8 @@ class NumericProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Improper numeric data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(str(value))
+        converted = [str(value) for value in values]
+        self.items.extend(converted)
 
 
 class TextProcessor(DataProcessor):
@@ -55,8 +55,7 @@ class TextProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Text data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(value)
+        self.items.extend(values)
 
 
 class LogProcessor(DataProcessor):
@@ -77,13 +76,35 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Dict data")
         values = data if isinstance(data, list) else [data]
+        converted: list[str] = []
         for value in values:
             if "log_level" in value and "log_message" in value:
-                self.items.append(
+                converted.append(
                     f"{value['log_level']}: {value['log_message']}"
                 )
             else:
-                self.items.append(str(value))
+                converted.append(str(value))
+        self.items.extend(converted)
+
+
+def require_processor(value: object) -> DataProcessor:
+    if not isinstance(value, DataProcessor):
+        raise TypeError("Expected a DataProcessor instance")
+    items = getattr(value, "items", None)
+    index = getattr(value, "index", None)
+    if not isinstance(items, list) or not all(
+        isinstance(item, str) for item in items
+    ):
+        raise ValueError("Processor must have a list of string items")
+    if not isinstance(index, int) or isinstance(index, bool) or index < 0:
+        raise ValueError("Processor rank must be a non-negative integer")
+    return value
+
+
+def require_stream(value: object) -> list[Any]:
+    if not isinstance(value, list):
+        raise TypeError("The stream must be a list")
+    return value
 
 
 class DataStream:
@@ -91,15 +112,32 @@ class DataStream:
         self.processors: list[DataProcessor] = []
 
     def register_processor(self, proc: DataProcessor) -> None:
-        self.processors.append(proc)
+        checked = require_processor(proc)
+        if any(registered is checked for registered in self.processors):
+            raise ValueError("Processor is already registered")
+        self.processors.append(checked)
 
     def process_stream(self, stream: list[Any]) -> None:
-        for data in stream:
+        for data in require_stream(stream):
+            handled = False
             for proc in self.processors:
-                if proc.validate(data):
-                    proc.ingest(data)
+                saved_items = proc.items.copy()
+                saved_index = proc.index
+                try:
+                    if proc.validate(data):
+                        proc.ingest(data)
+                        handled = True
+                        break
+                except Exception as error:
+                    proc.items[:] = saved_items
+                    proc.index = saved_index
+                    print(
+                        f"DataStream processor error: "
+                        f"{type(error).__name__}: {error}"
+                    )
+                    handled = True
                     break
-            else:
+            if not handled:
                 print(
                     "DataStream error - Can't process element in stream: "
                     f"{data}"

@@ -38,8 +38,8 @@ class NumericProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Improper numeric data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(str(value))
+        converted = [str(value) for value in values]
+        self.items.extend(converted)
 
 
 class TextProcessor(DataProcessor):
@@ -55,8 +55,7 @@ class TextProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Text data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(value)
+        self.items.extend(values)
 
 
 class LogProcessor(DataProcessor):
@@ -77,13 +76,15 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Dict data")
         values = data if isinstance(data, list) else [data]
+        converted: list[str] = []
         for value in values:
             if "log_level" in value and "log_message" in value:
-                self.items.append(
+                converted.append(
                     f"{value['log_level']}: {value['log_message']}"
                 )
             else:
-                self.items.append(str(value))
+                converted.append(str(value))
+        self.items.extend(converted)
 
 
 def main() -> None:

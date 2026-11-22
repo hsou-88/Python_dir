@@ -38,8 +38,8 @@ class NumericProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Improper numeric data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(str(value))
+        converted = [str(value) for value in values]
+        self.items.extend(converted)
 
 
 class TextProcessor(DataProcessor):
@@ -55,8 +55,7 @@ class TextProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Text data")
         values = data if isinstance(data, list) else [data]
-        for value in values:
-            self.items.append(value)
+        self.items.extend(values)
 
 
 class LogProcessor(DataProcessor):
@@ -77,13 +76,15 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Non Dict data")
         values = data if isinstance(data, list) else [data]
+        converted: list[str] = []
         for value in values:
             if "log_level" in value and "log_message" in value:
-                self.items.append(
+                converted.append(
                     f"{value['log_level']}: {value['log_message']}"
                 )
             else:
-                self.items.append(str(value))
+                converted.append(str(value))
+        self.items.extend(converted)
 
 
 class ExportPlugin(Protocol):
@@ -91,10 +92,49 @@ class ExportPlugin(Protocol):
         ...
 
 
+def require_export_data(value: object) -> list[tuple[int, str]]:
+    if not isinstance(value, list):
+        raise TypeError("Export data must be a list")
+    checked: list[tuple[int, str]] = []
+    ranks: set[int] = set()
+    for entry in value:
+        if not isinstance(entry, tuple) or len(entry) != 2:
+            raise TypeError("Each export entry must be a (rank, value) tuple")
+        rank, text = entry
+        if not isinstance(rank, int) or isinstance(rank, bool):
+            raise TypeError("Export ranks must be integers")
+        if rank < 0:
+            raise ValueError("Export ranks must not be negative")
+        if not isinstance(text, str):
+            raise TypeError("Export values must be strings")
+        if rank in ranks:
+            raise ValueError("Export ranks must be unique")
+        ranks.add(rank)
+        checked.append((rank, text))
+    return checked
+
+
+def require_output_count(value: object) -> int:
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise TypeError("Output count must be an integer")
+    if value < 0:
+        raise ValueError("Output count must not be negative")
+    return value
+
+
+def require_export_plugin(value: object) -> None:
+    if not callable(getattr(value, "process_output", None)):
+        raise TypeError("Export plugin must provide process_output()")
+
+
+class PipelineExportError(RuntimeError):
+    pass
+
+
 class CSVExportPlugin:
     def process_output(self, data: list[tuple[int, str]]) -> None:
         fields: list[str] = []
-        for _, value in data:
+        for _, value in require_export_data(data):
             if any(char in value for char in ',"\r\n'):
                 value = '"' + value.replace('"', '""') + '"'
             fields.append(value)
@@ -110,7 +150,7 @@ class JSONExportPlugin:
                 escaped.append('\\"')
             elif char == "\\":
                 escaped.append("\\\\")
-            elif ord(char) < 32:
+            elif ord(char) < 32 or 0xD800 <= ord(char) <= 0xDFFF:
                 escaped.append(f"\\u{ord(char):04x}")
             else:
                 escaped.append(char)
@@ -120,10 +160,30 @@ class JSONExportPlugin:
         fields = [
             f'{self.escape_string(f"item_{rank}")}: '
             f'{self.escape_string(value)}'
-            for rank, value in data
+            for rank, value in require_export_data(data)
         ]
         print("JSON Output:")
         print("{" + ", ".join(fields) + "}")
+
+
+def require_processor(value: object) -> DataProcessor:
+    if not isinstance(value, DataProcessor):
+        raise TypeError("Expected a DataProcessor instance")
+    items = getattr(value, "items", None)
+    index = getattr(value, "index", None)
+    if not isinstance(items, list) or not all(
+        isinstance(item, str) for item in items
+    ):
+        raise ValueError("Processor must have a list of string items")
+    if not isinstance(index, int) or isinstance(index, bool) or index < 0:
+        raise ValueError("Processor rank must be a non-negative integer")
+    return value
+
+
+def require_stream(value: object) -> list[Any]:
+    if not isinstance(value, list):
+        raise TypeError("The stream must be a list")
+    return value
 
 
 class DataStream:
@@ -131,15 +191,32 @@ class DataStream:
         self.processors: list[DataProcessor] = []
 
     def register_processor(self, proc: DataProcessor) -> None:
-        self.processors.append(proc)
+        checked = require_processor(proc)
+        if any(registered is checked for registered in self.processors):
+            raise ValueError("Processor is already registered")
+        self.processors.append(checked)
 
     def process_stream(self, stream: list[Any]) -> None:
-        for data in stream:
+        for data in require_stream(stream):
+            handled = False
             for proc in self.processors:
-                if proc.validate(data):
-                    proc.ingest(data)
+                saved_items = proc.items.copy()
+                saved_index = proc.index
+                try:
+                    if proc.validate(data):
+                        proc.ingest(data)
+                        handled = True
+                        break
+                except Exception as error:
+                    proc.items[:] = saved_items
+                    proc.index = saved_index
+                    print(
+                        f"DataStream processor error: "
+                        f"{type(error).__name__}: {error}"
+                    )
+                    handled = True
                     break
-            else:
+            if not handled:
                 print(
                     "DataStream error - Can't process element in stream: "
                     f"{data}"
@@ -160,12 +237,22 @@ class DataStream:
             )
 
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
-        if nb < 0:
-            raise ValueError("Output count must not be negative")
+        limit = require_output_count(nb)
+        require_export_plugin(plugin)
         for proc in self.processors:
-            count = min(nb, len(proc.items))
-            data = [proc.output() for _ in range(count)]
-            plugin.process_output(data)
+            saved_items = proc.items.copy()
+            saved_index = proc.index
+            try:
+                count = min(limit, len(proc.items))
+                data = [proc.output() for _ in range(count)]
+                plugin.process_output(data)
+            except Exception as error:
+                proc.items[:] = saved_items
+                proc.index = saved_index
+                raise PipelineExportError(
+                    f"Export failed for {type(proc).__name__}; "
+                    "processor data and rank were restored"
+                ) from error
 
 
 def main() -> None:

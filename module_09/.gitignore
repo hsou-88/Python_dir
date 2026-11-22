@@ -1,0 +1,6 @@
+.venv/
+lab_env/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.env
