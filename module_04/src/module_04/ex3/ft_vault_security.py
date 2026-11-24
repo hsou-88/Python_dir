@@ -12,8 +12,12 @@ def secure_archive(
                 file.write(content)
             return True, "Content successfully written to file"
         return False, f"Invalid action: '{action}'. Use 'read' or 'write'."
-    except (OSError, ValueError) as error:
-        return False, str(error)
+    except KeyboardInterrupt as e:
+        return False, f"File operation interrupted: {e}"
+    except MemoryError as e:
+        return False, f"Not enough memory for file operation: {e}"
+    except (OSError, ValueError) as e:
+        return False, str(e)
 
 
 def main(
@@ -37,4 +41,3 @@ def main(
 
 if __name__ == "__main__":
     main()
-

@@ -15,6 +15,12 @@ def open_text() -> None:
             text = file.read()
         finally:
             file.close()
+    except KeyboardInterrupt as e:
+        print(f"\nFile operation interrupted: {e}")
+        return
+    except MemoryError as e:
+        print(f"Not enough memory for file operation: {e}")
+        return
     except (OSError, ValueError) as e:
         print(f"Error opening file '{name}': {e}")
         return

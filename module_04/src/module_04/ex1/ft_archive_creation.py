@@ -9,8 +9,14 @@ def read_archive(name: str) -> str | None:
             text = file.read()
         finally:
             file.close()
-    except (OSError, ValueError) as error:
-        print(f"Error opening file '{name}': {error}")
+    except KeyboardInterrupt as e:
+        print(f"\nFile operation interrupted: {e}")
+        return None
+    except MemoryError as e:
+        print(f"Not enough memory for file operation: {e}")
+        return None
+    except (OSError, ValueError) as e:
+        print(f"Error opening file '{name}': {e}")
         return None
 
     print("---")
@@ -37,8 +43,14 @@ def save_archive(name: str, text: str) -> None:
             file.write(text)
         finally:
             file.close()
-    except (OSError, ValueError) as error:
-        print(f"Error opening file '{name}': {error}")
+    except KeyboardInterrupt as e:
+        print(f"\nFile writing interrupted: {e}")
+        return
+    except MemoryError as e:
+        print(f"Not enough memory to write file: {e}")
+        return
+    except (OSError, ValueError) as e:
+        print(f"Error opening file '{name}': {e}")
         print("Data not saved.")
         return
     print(f"Data saved in file '{name}'.")
@@ -53,15 +65,28 @@ def main() -> None:
     if text is None:
         return
 
-    transformed = add_archive_markers(text)
+    try:
+        transformed = add_archive_markers(text)
+    except KeyboardInterrupt as e:
+        print(f"\nData transformation interrupted: {e}")
+        return
+    except MemoryError as e:
+        print(f"Not enough memory to transform data: {e}")
+        return
     print("Transform data:\n---")
     print(transformed, end="" if transformed.endswith("\n")
           or not transformed else "\n")
     print("---")
     try:
         name = input("Enter new file name (or empty): ")
-    except (EOFError, OSError, ValueError) as error:
-        print(f"Error reading file name: {error}")
+    except KeyboardInterrupt as e:
+        print(f"\nInput interrupted: {e}")
+        return
+    except MemoryError as e:
+        print(f"Not enough memory to read input: {e}")
+        return
+    except (EOFError, OSError, ValueError) as e:
+        print(f"Error reading file name: {e}")
         print("Data not saved.")
         return
     if not name:

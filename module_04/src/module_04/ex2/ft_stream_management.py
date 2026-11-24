@@ -9,8 +9,16 @@ def read_archive(name: str) -> str | None:
             text = file.read()
         finally:
             file.close()
-    except (OSError, ValueError) as error:
-        print(f"[STDERR] Error opening file '{name}': {error}",
+    except KeyboardInterrupt as e:
+        print(f"\n[STDERR] File operation interrupted: {e}",
+              file=sys.stderr)
+        return None
+    except MemoryError as e:
+        print(f"[STDERR] Not enough memory for file operation: {e}",
+              file=sys.stderr)
+        return None
+    except (OSError, ValueError) as e:
+        print(f"[STDERR] Error opening file '{name}': {e}",
               file=sys.stderr)
         return None
 
@@ -38,8 +46,15 @@ def save_archive(name: str, text: str) -> None:
             file.write(text)
         finally:
             file.close()
-    except (OSError, ValueError) as error:
-        print(f"[STDERR] Error opening file '{name}': {error}",
+    except KeyboardInterrupt as e:
+        print(f"\n[STDERR] File writing interrupted: {e}", file=sys.stderr)
+        return
+    except MemoryError as e:
+        print(f"[STDERR] Not enough memory to write file: {e}",
+              file=sys.stderr)
+        return
+    except (OSError, ValueError) as e:
+        print(f"[STDERR] Error opening file '{name}': {e}",
               file=sys.stderr)
         print("Data not saved.")
         return
@@ -55,7 +70,16 @@ def main() -> None:
     if text is None:
         return
 
-    transformed = add_archive_markers(text)
+    try:
+        transformed = add_archive_markers(text)
+    except KeyboardInterrupt as e:
+        print(f"\n[STDERR] Data transformation interrupted: {e}",
+              file=sys.stderr)
+        return
+    except MemoryError as e:
+        print(f"[STDERR] Not enough memory to transform data: {e}",
+              file=sys.stderr)
+        return
     print("Transform data:\n---")
     print(transformed, end="" if transformed.endswith("\n")
           or not transformed else "\n")
@@ -64,8 +88,15 @@ def main() -> None:
         sys.stdout.write("Enter new file name (or empty): ")
         sys.stdout.flush()
         name = sys.stdin.readline().rstrip("\r\n")
-    except (OSError, ValueError) as error:
-        print(f"[STDERR] Error reading file name: {error}", file=sys.stderr)
+    except KeyboardInterrupt as e:
+        print(f"\n[STDERR] Input interrupted: {e}", file=sys.stderr)
+        return
+    except MemoryError as e:
+        print(f"[STDERR] Not enough memory to read input: {e}",
+              file=sys.stderr)
+        return
+    except (OSError, ValueError) as e:
+        print(f"[STDERR] Error reading file name: {e}", file=sys.stderr)
         print("Data not saved.")
         return
     if not name:
