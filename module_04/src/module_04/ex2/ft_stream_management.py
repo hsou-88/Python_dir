@@ -10,11 +10,11 @@ def read_archive(name: str) -> str | None:
         finally:
             file.close()
     except KeyboardInterrupt as e:
-        print(f"\n[STDERR] File operation interrupted: {e}",
+        print(f"\n[STDERR] File operation interrupted: {e!r}",
               file=sys.stderr)
         return None
     except MemoryError as e:
-        print(f"[STDERR] Not enough memory for file operation: {e}",
+        print(f"[STDERR] Not enough memory for file operation: {e!r}",
               file=sys.stderr)
         return None
     except (OSError, ValueError) as e:
@@ -47,10 +47,10 @@ def save_archive(name: str, text: str) -> None:
         finally:
             file.close()
     except KeyboardInterrupt as e:
-        print(f"\n[STDERR] File writing interrupted: {e}", file=sys.stderr)
+        print(f"\n[STDERR] File writing interrupted: {e!r}", file=sys.stderr)
         return
     except MemoryError as e:
-        print(f"[STDERR] Not enough memory to write file: {e}",
+        print(f"[STDERR] Not enough memory to write file: {e!r}",
               file=sys.stderr)
         return
     except (OSError, ValueError) as e:
@@ -73,11 +73,11 @@ def main() -> None:
     try:
         transformed = add_archive_markers(text)
     except KeyboardInterrupt as e:
-        print(f"\n[STDERR] Data transformation interrupted: {e}",
+        print(f"\n[STDERR] Data transformation interrupted: {e!r}",
               file=sys.stderr)
         return
     except MemoryError as e:
-        print(f"[STDERR] Not enough memory to transform data: {e}",
+        print(f"[STDERR] Not enough memory to transform data: {e!r}",
               file=sys.stderr)
         return
     print("Transform data:\n---")
@@ -89,10 +89,10 @@ def main() -> None:
         sys.stdout.flush()
         name = sys.stdin.readline().rstrip("\r\n")
     except KeyboardInterrupt as e:
-        print(f"\n[STDERR] Input interrupted: {e}", file=sys.stderr)
+        print(f"\n[STDERR] Input interrupted: {e!r}", file=sys.stderr)
         return
     except MemoryError as e:
-        print(f"[STDERR] Not enough memory to read input: {e}",
+        print(f"[STDERR] Not enough memory to read input: {e!r}",
               file=sys.stderr)
         return
     except (OSError, ValueError) as e:

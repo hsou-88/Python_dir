@@ -13,9 +13,9 @@ def secure_archive(
             return True, "Content successfully written to file"
         return False, f"Invalid action: '{action}'. Use 'read' or 'write'."
     except KeyboardInterrupt as e:
-        return False, f"File operation interrupted: {e}"
+        return False, f"File operation interrupted: {e!r}"
     except MemoryError as e:
-        return False, f"Not enough memory for file operation: {e}"
+        return False, f"Not enough memory for file operation: {e!r}"
     except (OSError, ValueError) as e:
         return False, str(e)
 

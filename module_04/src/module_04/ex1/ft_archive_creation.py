@@ -10,10 +10,10 @@ def read_archive(name: str) -> str | None:
         finally:
             file.close()
     except KeyboardInterrupt as e:
-        print(f"\nFile operation interrupted: {e}")
+        print(f"\nFile operation interrupted: {e!r}")
         return None
     except MemoryError as e:
-        print(f"Not enough memory for file operation: {e}")
+        print(f"Not enough memory for file operation: {e!r}")
         return None
     except (OSError, ValueError) as e:
         print(f"Error opening file '{name}': {e}")
@@ -44,10 +44,10 @@ def save_archive(name: str, text: str) -> None:
         finally:
             file.close()
     except KeyboardInterrupt as e:
-        print(f"\nFile writing interrupted: {e}")
+        print(f"\nFile writing interrupted: {e!r}")
         return
     except MemoryError as e:
-        print(f"Not enough memory to write file: {e}")
+        print(f"Not enough memory to write file: {e!r}")
         return
     except (OSError, ValueError) as e:
         print(f"Error opening file '{name}': {e}")
@@ -68,10 +68,10 @@ def main() -> None:
     try:
         transformed = add_archive_markers(text)
     except KeyboardInterrupt as e:
-        print(f"\nData transformation interrupted: {e}")
+        print(f"\nData transformation interrupted: {e!r}")
         return
     except MemoryError as e:
-        print(f"Not enough memory to transform data: {e}")
+        print(f"Not enough memory to transform data: {e!r}")
         return
     print("Transform data:\n---")
     print(transformed, end="" if transformed.endswith("\n")
@@ -80,12 +80,16 @@ def main() -> None:
     try:
         name = input("Enter new file name (or empty): ")
     except KeyboardInterrupt as e:
-        print(f"\nInput interrupted: {e}")
+        print(f"\nInput interrupted: {e!r}")
         return
     except MemoryError as e:
-        print(f"Not enough memory to read input: {e}")
+        print(f"Not enough memory to read input: {e!r}")
         return
-    except (EOFError, OSError, ValueError) as e:
+    except EOFError as e:
+        print(f"Error reading file name: {e!r}")
+        print("Data not saved.")
+        return
+    except (OSError, ValueError) as e:
         print(f"Error reading file name: {e}")
         print("Data not saved.")
         return
